@@ -23,7 +23,7 @@ Usage:
     --title "Foo Cohort Roster 2026" \\
     --admin bilal@example.com \\
     --admin sheeran@example.com \\
-    [--tokenomics-sa ivy-yoga@get-data-io.iam.gserviceaccount.com]
+    [--tokenomics-sa ivy-yoga-get-data-io-iam-gserv@get-data-io.iam.gserviceaccount.com]
 
 Outputs the new spreadsheet URL on stdout.
 """
@@ -47,7 +47,7 @@ SCOPES = [
     'https://www.googleapis.com/auth/drive',
 ]
 
-DEFAULT_TOKENOMICS_SA = 'ivy-yoga@get-data-io.iam.gserviceaccount.com'
+DEFAULT_TOKENOMICS_SA = 'ivy-yoga-get-data-io-iam-gserv@get-data-io.iam.gserviceaccount.com'
 
 ROSTER_HEADERS = [
     'Name', 'School', 'Learner Type', 'Graduation Date',
