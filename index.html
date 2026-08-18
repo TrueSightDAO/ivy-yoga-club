@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Butterfly Effect Club · Admin Console</title>
-  <meta name="description" content="Administrative console for the ERA Professionals Butterfly Effect credentialing cohort." />
+  <title>IVY Club · Admin Console</title>
+  <meta name="description" content="Administrative console for the ERA Professionals (Indus Valley Yoga) IVY credentialing cohort." />
   <link id="favicon" rel="icon" type="image/png" href="cert_template/logo.png" />
   <link rel="apple-touch-icon" href="cert_template/logo.png" />
   <style>
@@ -75,12 +75,12 @@
   <header>
     <img id="programLogo" class="logo" src="cert_template/logo.png" alt="" />
     <div class="titles">
-      <h1><span id="programName">Butterfly Effect Club</span> <span id="modeIndicator" class="pill">booting…</span></h1>
-      <p class="subtitle">Administrative console for the ERA Professionals × TrueSight DAO credentialing cohort.</p>
+      <h1><span id="programName">IVY Club</span> <span id="modeIndicator" class="pill">booting…</span></h1>
+      <p class="subtitle">Administrative console for the ERA Professionals (Indus Valley Yoga) × TrueSight DAO credentialing cohort.</p>
     </div>
   </header>
 
-  <div id="bootBanner" class="banner warn">Booting from <code>truesight.me/programs/butterfly-effect/manifest.json</code>…</div>
+  <div id="bootBanner" class="banner warn">Booting from <code>truesight.me/programs/ivy-yoga/manifest.json</code>…</div>
 
   <section id="identityCard" style="display:none;">
     <h2>Signed in</h2>
@@ -124,24 +124,32 @@
 
   <section id="publicCard" style="display:none;">
     <h2>Public information</h2>
-    <p>This page is the administrative console for the Butterfly Effect program (ERA Professionals × TrueSight DAO). It's only useful to people who manage the cohort roster.</p>
+    <p>This page is the administrative console for the IVY (Indus Valley Yoga) program (ERA Professionals × TrueSight DAO). It's only useful to people who manage the cohort roster.</p>
     <p>If you're a participant, scan the QR code on your printed certificate to view your credential profile on truesight.me.</p>
-    <p>Program homepage: <a href="https://truesight.me/programs/butterfly-effect/" target="_blank">truesight.me/programs/butterfly-effect/</a></p>
+    <p>Program homepage: <a href="https://truesight.me/programs/ivy-yoga/" target="_blank">truesight.me/programs/ivy-yoga/</a></p>
   </section>
 
   <footer>
-    <p><a href="https://github.com/TrueSightDAO/butterfly-effect-club" target="_blank">Source</a> · <a href="https://truesight.me" target="_blank">truesight.me</a> · <a href="https://github.com/TrueSightDAO/butterfly-effect-club/blob/main/PROPOSAL.md" target="_blank">Architecture</a></p>
+    <p><a href="https://github.com/TrueSightDAO/ivy-yoga-club" target="_blank">Source</a> · <a href="https://truesight.me" target="_blank">truesight.me</a> · <a href="https://github.com/TrueSightDAO/ivy-yoga-club/blob/main/PROPOSAL.md" target="_blank">Architecture</a></p>
   </footer>
 
 <script>
 'use strict';
 
-const MANIFEST_URL = 'https://truesight.me/programs/butterfly-effect/manifest.json';
+const MANIFEST_URL = 'https://truesight.me/programs/ivy-yoga/manifest.json';
 const EDGAR_BASE = 'https://edgar.truesight.me';
 const VERIFY_URL = 'https://dapp.truesight.me/verify_request.html';
-const LS_PUB = 'be_panel_public_key';
-const LS_PRIV = 'be_panel_private_key';
-const LS_EMAIL = 'be_panel_email';
+const LS_PUB = 'ivy_panel_public_key';
+const LS_PRIV = 'ivy_panel_private_key';
+const LS_EMAIL = 'ivy_panel_email';
+
+// Academic-year label (e.g. "2026-2027"), not the fork's original hardcoded string —
+// so this stays correct without a code change every cohort year.
+function programYear() {
+  const now = new Date();
+  const y = now.getFullYear();
+  return now.getMonth() >= 6 ? `${y}-${y + 1}` : `${y - 1}-${y}`;
+}
 
 let manifest = null;
 let panelConfig = null;  // local config.json from same origin
@@ -568,20 +576,20 @@ async function attestRow(idx) {
   const priv = localStorage.getItem(LS_PRIV);
   const attesteePk = await generateKeyPair(); // mint fresh per-attestee placeholder
   const attesteeHash = await pubKeyHash(attesteePk.publicKeyB64);
-  const profileUrl = 'https://truesight.me/programs/butterfly-effect/credentials/#' + attesteeHash;
+  const profileUrl = 'https://truesight.me/programs/ivy-yoga/credentials/#' + attesteeHash;
   const attrs = {
-    'Program': 'butterfly-effect',
+    'Program': 'ivy-yoga',
     'Attestation Type': 'program-completion',
     'Attestor Public Key': pub,
     'Attestor Name': identity.name || '',
     'Attestee Public Key': attesteePk.publicKeyB64,
     'Attestee Name': row.Name || '',
     'Captured At': new Date().toISOString(),
-    'Program Year': '2025-2026',
+    'Program Year': programYear(),
     'Roster Source URL': manifest.roster_sheet_url,
     'Roster Source Row': row._row,
-    'Config URL': 'https://raw.githubusercontent.com/TrueSightDAO/butterfly-effect-club/main/config.json',
-    'Schema URL': 'https://github.com/TrueSightDAO/butterfly-effect-club/blob/main/SCHEMA.md',
+    'Config URL': 'https://raw.githubusercontent.com/TrueSightDAO/ivy-yoga-club/main/config.json',
+    'Schema URL': 'https://github.com/TrueSightDAO/ivy-yoga-club/blob/main/SCHEMA.md',
     'Source URL': window.location.href,
     'Payload JSON': JSON.stringify({
       school: row.School || '',
