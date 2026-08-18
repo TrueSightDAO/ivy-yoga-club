@@ -1,135 +1,72 @@
-# program-template — TrueSight DAO cohort-credentialing template
+# ivy-yoga-club
 
-Fork this repo to launch a new **cohort-credentialing program** under the TrueSight DAO infrastructure. Within ~30 minutes you can have:
+Operational repo for ERA Professionals' **IVY** cohort onboarding into the TrueSight DAO credentialing platform.
+IVY is a yoga-teacher-training certification based on Olivia's "Liv for Yoga" curriculum, rooted in Bikram
+Chaudhry's 26-posture regimen. Second program on this infrastructure, after
+[`butterfly-effect-club`](https://github.com/TrueSightDAO/butterfly-effect-club) — same architecture, no
+platform-side changes required (`agentic_ai_context/plans/IVY_YOGA_COHORT_ONBOARDING_PLAN.md`).
 
-- A roster sheet with audit columns + Audit Trail tab
-- An admin console at `https://<your-program>.truesight.me/`
-- Public credential pages at `https://truesight.me/programs/<your-slug>/credentials/#<pk_hash>`
-- End-to-end attestation pipeline (browser-signed → Edgar → central GAS → lineage-credentials → rendered PDF)
+**Live surfaces:**
+- Public credential pages → `https://truesight.me/programs/ivy-yoga/credentials/#<pk_hash>`
+- Admin console → `https://ivy-yoga.truesight.me/` (GitHub Pages from this repo's `main` root)
 
-**Working reference implementation:** [`TrueSightDAO/butterfly-effect-club`](https://github.com/TrueSightDAO/butterfly-effect-club) (ERA Professionals × TrueSight DAO, 97 alumni). Read its `PROPOSAL.md` for the full architecture decisions.
+**This repo holds:**
+- `scripts/sync_cohort.py` — dev-side `--dry-run` tool that previews the event shape against IVY's Cohort Roster.
+  Live attestations flow through the admin panel (browser-signed) → Edgar → central tokenomics handler.
+- `index.html` — admin console. Boot fetches `./config.json`, runtime-auth-resolves admins against the Cohort
+  Roster sheet's editor list (via GAS proxy). No per-program edits needed — it auto-rebrands from `config.json`.
+- `config.json` — program bootstrap config: roster sheet URL (indirect, via the public manifest), GAS proxy URL,
+  schema URL, lineage-credentials path, Edgar endpoint.
+- `SCHEMA.md` — Cohort Roster sheet schema + the `[CREDENTIALING ATTESTATION EVENT]` field reference (inherited
+  unchanged from the template — same column convention across every program).
+- `PROPOSAL.md` — architecture decision record, inherited from `butterfly-effect-club` (the v4 design this program
+  reuses verbatim; kept for reference, not IVY-specific).
 
-**Canonical playbook:** [`agentic_ai_context/CREDENTIALING_COHORT_PROGRAM_ONBOARDING.md`](https://github.com/TrueSightDAO/agentic_ai_context/blob/main/CREDENTIALING_COHORT_PROGRAM_ONBOARDING.md)
+**Trust circle:** whoever is an editor on the Cohort Roster sheet
+(`https://docs.google.com/spreadsheets/d/1IrzM8z9X0bt-1Zp21s6DNxlL_1XaT-8Fq6e3YaQRcnU/edit`). Currently: Gary,
+Bilal, Shahbaz, Danesh, Arshad (live-verified via the central tokenomics endpoint 2026-08-18). To grant or revoke
+admin access: share/unshare the sheet. No static admin file to maintain.
 
----
+**This repo does NOT hold:**
+- Per-participant credential data (lives in `TrueSightDAO/lineage-credentials`, `programs/ivy-yoga/` once the
+  first attestation lands).
+- Cache artifacts / PDFs (rendered by `TrueSightDAO/lineage-engine` on push to `lineage-credentials`).
+- Secrets: any local service-account JSON is `.gitignore`'d; CI uses base64-encoded GitHub Actions secrets
+  (`GOOGLE_CREDENTIALS_JSON_B64`, same pattern as `butterfly-effect-club`).
 
-## What you do (6 operator steps)
+## Cert template
 
-### 1. Fork this repo
+`cert_template/` ships the real v1.2 design (Shahbaz, 2026-08-17 — hand-delivered by Gary 2026-08-18 after the
+WhatsApp export dropped the media). Overlay coordinates and the three Google Fonts it uses (Cormorant Garamond,
+Inter, Great Vibes) were reverse-engineered from the PDF and are vendored in full under `cert_template/fonts/` —
+details in `cert_template/README.md`. Two of the design's overlay fields (the Bilal + Olivia dual signatures, and
+the cosmetic `IVY-TT-<year>-<seq>` certificate ID) aren't wired into lineage-engine's renderer yet — that's PR3 in
+the plan of record, gated on two open decisions.
 
-```
-gh repo fork TrueSightDAO/program-template --clone --remote=false --org=TrueSightDAO --fork-name=<your-program>-club
-```
-
-Rename the fork to match your program slug (e.g. `swe-apprentice-club`, `yoga-iyengar-club`). The slug should be **lowercase, hyphen-separated, ASCII, ≤32 chars** — it gets etched into printed certificate QR codes per `CREDENTIALING_PROGRAM_PAGES.md §3`.
-
-### 2. Edit `config.json`
-
-Replace every `TODO-your-program-slug` / `TODO Your Program` with your actual values. The `_note` and `_routing_note` fields are operator hints — keep or remove as you prefer.
-
-### 3. Replace `cert_template/`
-
-Drop in your program's certificate PDF, logo, and font files. Update `cert_template/cert_config.json` overlay coordinates so the recipient name + date land in the right place on your design.
-
-If you don't have a custom design yet, the placeholder files in this template render a generic certificate that's usable for testing.
-
-### 4. Set up your Google Sheet
-
-**Easiest — run the bootstrap script:**
+## Quick start (local dry-run)
 
 ```bash
-cd scripts
-pip install -r requirements.txt
-export GOOGLE_OAUTH_CLIENT_SECRET_JSON=$HOME/client_secret.json  # see scripts/README.md for OAuth setup
-python3 create_roster_sheet.py \
-  --title "Your Program Cohort Roster 2026" \
-  --admin admin1@example.com \
-  --admin admin2@example.com
+cd /opt/claude_workspace/ivy_yoga_club
+
+# 1. Install deps
+pip install -r scripts/requirements.txt
+
+# 2. Point at the local service-account credentials
+export GOOGLE_APPLICATION_CREDENTIALS=~/ivy_yoga_google_private_key.json
+
+# 3. Dry-run the sync — walks every pending row in the Cohort Roster, prints plan
+python3 scripts/sync_cohort.py --dry-run
 ```
 
-The script creates the sheet with both tabs (`Cohort Roster` + `Audit Trail`), all 16+9 columns, formatting (frozen header, alternating bands, conditional formatting on `status`), and shares it with the tokenomics SA + your admins as Editor. Outputs the URL. **One command, no clicking through Google Sheets UI.** LLM agents helping with setup can run this directly.
+## Documents
 
-**Manual alternative** if you'd rather build the sheet by hand:
+- [`PROPOSAL.md`](PROPOSAL.md) — architecture decision record (inherited from butterfly-effect-club)
+- [`SCHEMA.md`](SCHEMA.md) — Cohort Roster schema + back-fill column glossary
+- [`scripts/README.md`](scripts/README.md) — operator runbook
 
-Create a fresh Google Sheet with two tabs (`Cohort Roster` + `Audit Trail`) and these exact column headers in row 1:
+## References
 
-**`Cohort Roster` tab — row 1:**
-
-```
-Name	School	Learner Type	Graduation Date	public_key	pk_hash	attestation_tx_id	qualification_tx_id	profile_url	credential_pdf_url	certificate_url	status	processed_at	github_commit_sha	notes	public_listable_override
-```
-
-**`Audit Trail` tab — row 1:**
-
-```
-processed_at	name	action	github_commit_sha	profile_url	credential_pdf_url	certificate_url	error_message	triggered_by
-```
-
-Optional polish — match what `butterfly-effect-club` does: freeze row 1, bold the header band, add alternating row banding, conditional-format the `status` column (green=processed / yellow=pending / red=failed). All cosmetic — the back-end works without them.
-
-**Then share** the sheet (either path) with:
-- **`butterfly-effect-club@get-data-io.iam.gserviceaccount.com`** (the tokenomics SA) as **Editor** — this is what allows the central handler to back-fill audit columns
-- Each person who should be able to attest cohort completions, as **Editor**. Sheet editors = trust circle.
-
-### 5. PR to truesight_me_beta
-
-Add a manifest at `truesight_me_beta/programs/<your-slug>/manifest.json` extending the existing manifest schema with these credentialing fields:
-
-```json
-{
-  "program_mode": "cohort_credentialing",
-  "roster_sheet_url": "https://docs.google.com/spreadsheets/d/<your-sheet-id>/edit",
-  "roster_tab": "Cohort Roster",
-  "audit_trail_tab": "Audit Trail",
-  "admin_panel_url": "https://<your-program>.truesight.me/",
-  "program_repo": "https://github.com/TrueSightDAO/<your-program>-club",
-  "tokenomics_admin_endpoint": "https://script.google.com/macros/s/AKfycbytzZtEhKEHCmxoSbhQXrg5Clc7imS24BFT134nu9yN4QvMCuQfhzEHgbuT8PRYcxgtGQ/exec"
-}
-```
-
-(Reuse the existing `tokenomics_admin_endpoint` URL — it's a single central GAS that handles all programs.)
-
-After merge, sync to `truesight_me_prod` per `MEMORY:feedback_truesight_me_cname_divergence` (preserve `CNAME` while syncing).
-
-### 6. Configure DNS + GitHub Pages
-
-- DNS: add CNAME record `<your-program>.truesight.me` → `truesightdao.github.io` (Route 53 in the TRUESIGHT_DAO_AUTOPILOT AWS account if truesight.me)
-- GitHub Pages: in your repo's Settings → Pages, set source to `main` branch root, custom domain `<your-program>.truesight.me`. Enforce HTTPS once cert provisions
-
----
-
-## End result
-
-Once steps 1–6 are done:
-
-1. Open `https://<your-program>.truesight.me/` → embedded `create_signature.html` flow asks for your email
-2. Verify your email → admin recognizes you (your email is a sheet editor)
-3. Attestation queue loads from your roster's pending rows
-4. Click Attest on a row → public credential page renders at `truesight.me/programs/<your-slug>/credentials/#<pk_hash>` within ~60s
-
-Any new sheet editor you add becomes an admin on next sign-in. No per-program GAS deployment or backend ever needed.
-
----
-
-## Files in this template
-
-| File | Purpose | What to edit |
-|---|---|---|
-| `config.json` | Program identity + asset paths | Slug, display name, sheet URLs |
-| `index.html` | Admin console (boots from config.json) | Usually nothing — auto-rebrands from config |
-| `CNAME` | GitHub Pages custom domain | Your subdomain |
-| `cert_template/` | Certificate PDF + logo + fonts | Replace with your design |
-| `SCHEMA.md` | Sheet column glossary + event field reference | Update sheet URL only |
-| `scripts/sync_cohort.py` | Dev-side `--dry-run` tool | Usually nothing — works against any roster sheet that follows the standard layout |
-| `PROPOSAL.md` | Architecture record from butterfly-effect-club | Keep as reference, or replace with your own |
-| `.github/workflows/sync_cohort.yml` | Daily cron dry-run + manual workflow_dispatch | Usually nothing |
-
----
-
-## Architecture references
-
-- [`PROPOSAL.md`](PROPOSAL.md) — full v4 architecture decisions (originally from butterfly-effect-club; describes the central-tokenomics-GAS + self-describing-events model your fork inherits)
-- [`SCHEMA.md`](SCHEMA.md) — sheet column convention + `[CREDENTIALING ATTESTATION EVENT]` payload spec
-- [`agentic_ai_context/CREDENTIALING_COHORT_PROGRAM_ONBOARDING.md`](https://github.com/TrueSightDAO/agentic_ai_context/blob/main/CREDENTIALING_COHORT_PROGRAM_ONBOARDING.md) — canonical playbook
-- [`agentic_ai_context/CREDENTIALING_PLATFORM.md`](https://github.com/TrueSightDAO/agentic_ai_context/blob/main/CREDENTIALING_PLATFORM.md) — broader credentialing data model (also covers practitioner activity-tracking mode like capoeira)
-- [`agentic_ai_context/CREDENTIALING_PROGRAM_PAGES.md`](https://github.com/TrueSightDAO/agentic_ai_context/blob/main/CREDENTIALING_PROGRAM_PAGES.md) — `truesight.me/programs/<slug>/` URL/page convention
+- `agentic_ai_context/plans/IVY_YOGA_COHORT_ONBOARDING_PLAN.md` — this program's plan of record, incl. UAT phase
+- `agentic_ai_context/credentials/CREDENTIALING_COHORT_PROGRAM_ONBOARDING.md` — the canonical onboarding playbook
+- `agentic_ai_context/credentials/CREDENTIALING_PLATFORM.md` — overall credentialing data model
+- [`butterfly-effect-club/PROPOSAL.md`](https://github.com/TrueSightDAO/butterfly-effect-club/blob/main/PROPOSAL.md) — the v4 architecture decisions this program reuses
