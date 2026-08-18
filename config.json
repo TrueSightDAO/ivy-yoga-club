@@ -15,8 +15,13 @@
     "cert_config": "cert_config.json",
     "pdf_template": "cert_template.pdf",
     "logo": "logo.png",
-    "fonts": ["fonts/YourFont-Regular.ttf"],
-    "_note": "PLACEHOLDER — swap for Shahbaz's real 'IVY certificate - blank - v1.2.pdf' + IVY logo + instructor-name font once handed off directly (not present in the WhatsApp export media). See TODO_CERT_ASSETS.md."
+    "fonts": [
+      "fonts/CormorantGaramond-VariableFont_wght.ttf",
+      "fonts/CormorantGaramond-Italic-VariableFont_wght.ttf",
+      "fonts/Inter-VariableFont_opsz-wght.ttf",
+      "fonts/GreatVibes-Regular.ttf"
+    ],
+    "_note": "Real v1.2 design (Shahbaz, 2026-08-17), hand-delivered by Gary 2026-08-18. cert_config.json overlay coordinates + font identification reverse-engineered via PDF text/image extraction — see cert_template/README.md. signature_bilal/signature_olivia/certificate_id overlay fields are documented but not yet wired into lineage-engine's renderer (PR3, gated)."
   },
   "trust_source": "sheet_editors",
   "_trust_source_note": "Trust circle = whoever is an editor on the roster sheet. Both the admin panel (auth gate) and the central tokenomics handler (signature verification) resolve via the central tokenomics GAS endpoint's list_sheet_editors&sheet_url=... action. No per-program GAS proxy deployment; no static authorized_attestors[] list.",

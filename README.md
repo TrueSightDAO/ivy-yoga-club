@@ -34,13 +34,14 @@ admin access: share/unshare the sheet. No static admin file to maintain.
 - Secrets: any local service-account JSON is `.gitignore`'d; CI uses base64-encoded GitHub Actions secrets
   (`GOOGLE_CREDENTIALS_JSON_B64`, same pattern as `butterfly-effect-club`).
 
-## ⚠️ Cert template — placeholder, pending real assets
+## Cert template
 
-`cert_template/` currently ships the generic template design. Shahbaz's actual "IVY certificate - blank - v1.2.pdf"
-(plus IVY logo + instructor-name font) were iterated in the ERA DAO WhatsApp thread on 2026-08-17 but were not
-included in the chat export's media — they need to be handed off directly and dropped into `cert_template/`
-(update `cert_template/cert_config.json` overlay coordinates to match). Does not block admin-panel / infra
-functionality — only cosmetic on the rendered certificate until swapped.
+`cert_template/` ships the real v1.2 design (Shahbaz, 2026-08-17 — hand-delivered by Gary 2026-08-18 after the
+WhatsApp export dropped the media). Overlay coordinates and the three Google Fonts it uses (Cormorant Garamond,
+Inter, Great Vibes) were reverse-engineered from the PDF and are vendored in full under `cert_template/fonts/` —
+details in `cert_template/README.md`. Two of the design's overlay fields (the Bilal + Olivia dual signatures, and
+the cosmetic `IVY-TT-<year>-<seq>` certificate ID) aren't wired into lineage-engine's renderer yet — that's PR3 in
+the plan of record, gated on two open decisions.
 
 ## Quick start (local dry-run)
 
