@@ -44,7 +44,7 @@ Auth modes:
 
 For each pending row in the ERA Cohort Roster sheet:
 
-1. Connects to the Google Sheet via the service account (`butterfly-effect-club@get-data-io.iam.gserviceaccount.com`)
+1. Connects to the Google Sheet via the service account (`ivy-yoga@get-data-io.iam.gserviceaccount.com`)
 2. Skips rows where `status == processed` AND `attestation_tx_id` is present
 3. For every row that needs work:
    - Mints an RSA-2048 keypair in-process (private half is garbage-collected immediately)

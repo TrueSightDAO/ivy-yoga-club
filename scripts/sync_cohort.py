@@ -31,9 +31,9 @@ from google.oauth2.service_account import Credentials
 
 ERA_SHEET_ID_DEFAULT = "1pApVCRqsDw9AjPUTc3fMUfMh-8H4Ne1HYuQ_d6xItog"
 COHORT_TAB_DEFAULT = "Cohort Roster"
-PROGRAM_SLUG = "butterfly-effect"
+PROGRAM_SLUG = "ivy-yoga"
 PROFILE_URL_TEMPLATE = (
-    "https://truesight.me/programs/butterfly-effect/credentials/#{pk_hash}"
+    "https://truesight.me/programs/ivy-yoga/credentials/#{pk_hash}"
 )
 
 SHEETS_SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
