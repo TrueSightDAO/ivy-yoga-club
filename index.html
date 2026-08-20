@@ -78,6 +78,8 @@
       <h1><span id="programName">IVY Club</span> <span id="modeIndicator" class="pill">booting…</span></h1>
       <p class="subtitle">Administrative console for the ERA Professionals (Indus Valley Yoga) × TrueSight DAO credentialing cohort.</p>
     </div>
+    <a id="headerRosterLink" href="#" target="_blank" rel="noopener" title="Open the cohort roster Google Sheet"
+       style="flex:0 0 auto;white-space:nowrap;border:1px solid var(--primary);border-radius:4px;padding:.35rem .6rem;font-size:.8rem;font-weight:600;background:white;color:var(--primary);">Roster sheet ↗</a>
   </header>
 
   <div id="bootBanner" class="banner warn">Booting from <code>truesight.me/programs/ivy-yoga/manifest.json</code>…</div>
@@ -403,6 +405,8 @@ async function boot() {
   // Surface the roster sheet link whenever we know the URL — useful even before queue loads
   if (manifest.roster_sheet_url) {
     const link = document.getElementById('rosterSheetLink');
+    const headerLink = document.getElementById(headerRosterLink);
+    if (headerLink) headerLink.href = manifest.roster_sheet_url;
     if (link) link.href = manifest.roster_sheet_url;
   }
 
